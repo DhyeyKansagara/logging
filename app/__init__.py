@@ -29,18 +29,6 @@ def page_not_found(e):
     return render_template("404.html"), 404
 
 
-class RequestFormatter(logging.Formatter):
-    def format(self, record):
-        if has_request_context():
-            record.url = request.url
-            record.remote_addr = request.remote_addr
-        else:
-            record.url = None
-            record.remote_addr = None
-
-        return super().format(record)
-
-
 def create_app():
     """Create and configure an instance of the Flask application."""
     app = Flask(__name__)
