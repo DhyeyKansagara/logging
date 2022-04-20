@@ -21,6 +21,7 @@ from app.exceptions import http_exceptions
 from app.simple_pages import simple_pages
 import logging
 from flask.logging import default_handler
+from app.formatter import RequestFormatter
 
 login_manager = flask_login.LoginManager()
 
@@ -62,8 +63,10 @@ def create_app():
         os.mkdir(logdir)
     # set name of the log file
     log_file = os.path.join(logdir, 'info.log')
+    debug_file = os.path.join(logdir, 'debug.log')
 
     handler = logging.FileHandler(log_file)
+    debug_handler = logging.FileHandler(debug_file)
     # Create a log file formatter object to create the entry in the log
     formatter = RequestFormatter(
         '[%(asctime)s] %(remote_addr)s requested %(url)s\n'
@@ -71,10 +74,13 @@ def create_app():
     )
     # set the formatter for the log entry
     handler.setFormatter(formatter)
+    debug_handler.setFormatter(formatter)
     # Set the logging level of the file handler object so that it logs INFO and up
     handler.setLevel(logging.INFO)
+    debug_handler.setLevel(logging.DEBUG)
     # Add the handler for the log entry
     app.logger.addHandler(handler)
+    app.logger.addHandler(debug_handler)
 
     @app.before_request
     def start_timer():
@@ -119,7 +125,8 @@ def create_app():
             parts.append(part)
         line = " ".join(parts)
         #this triggers a log entry to be created with whatever is in the line variable
-        app.logger.info('this is the plain message')
+        app.logger.info(line)
+        app.logger.debug('debugging this line ')
 
         return response
 
