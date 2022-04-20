@@ -5,6 +5,3 @@ def test_info_log():
 
 def test_debug_log():
     assert os.path.exists('./app/logs/debug.log') == True
-
-def test_random_log():
-    assert os.path.exists('./app/logs/random.log') == False
